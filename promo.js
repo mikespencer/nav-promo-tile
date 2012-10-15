@@ -38,7 +38,7 @@ var wpAd = window.wpAd || {};
       $(doc.createElement('img')).attr({
         'width': '1',
         'height': '1',
-        'src': url.replace(/\[timestamp\]|\[random\]|\%n/gi, Math.floor(Math.random()*1E9)),
+        'src': url.replace(/\[timestamp\]|\[random\]/gi, Math.floor(Math.random()*1E9)),
         'alt': arguments[1] || 'pixel'
       }).css({
         'border': '0',
