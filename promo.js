@@ -24,7 +24,13 @@ var wpAd = window.wpAd || {};
   }
   
   Promo.prototype.appendToNav = function(){
-    $(doc.createElement('div')).addClass('subnav-ad').append(this.creative).appendTo('#main-nav div.subnav');
+    $(doc.createElement('div')).addClass('nav-promo-tile').css({
+      display: 'block',
+      height: this.height + 'px',
+      margin: '5px auto auto -7px',
+      overflow: 'hidden',
+      width: this.width + 'px'
+    }).append(this.creative).appendTo('#main-nav div.subnav');
     return this;
   };
 
@@ -131,9 +137,9 @@ var wpAd = window.wpAd || {};
   
   Promo.prototype.addEvents = function(){
     $('#main-nav li.top').not('li.jobs, li.realestate, li.classifieds').hover(function(){
-      $('div.subnav-ad', this).css({'visibility': 'visible'});
+      $('div.nav-promo-tile', this).css({'visibility': 'visible'});
     }, function(){
-      $('div.subnav-ad', this).css({'visibility': 'hidden'});
+      $('div.nav-promo-tile', this).css({'visibility': 'hidden'});
     }).bind('mouseover.PromoTile', this.onFirstMouseOver.bind(this));
     
     return this;
