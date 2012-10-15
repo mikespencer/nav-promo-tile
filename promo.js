@@ -100,6 +100,11 @@ var wpAd = window.wpAd || {};
       scrolling: 'no',
       marginHeight: '0',
       marginWidth: '0'
+    }).css({
+      height: this.height + 'px',
+      width: this.width + 'px',
+      border: '0',
+      outline: '0'
     })[0];
   };
   
