@@ -30,19 +30,22 @@ var wpAd = window.wpAd || {};
 
   Promo.prototype.onFirstMouseOver = function(){
     $('#main-nav li.top').unbind('mouseover.PromoTile');
-    this.appendToNav().addPixel(this.impressionPixel, 'promo tile impression');
+    this.appendToNav().addPixel(this.impressionPixel, 'promo tile impression').addPixel(this.clientPixel, 'promo tile impression');
   };
   
   Promo.prototype.addPixel = function(url){
-    $(doc.createElement('img')).attr({
-      'width': '1',
-      'height': '1',
-      'src': url.replace(/\[timestamp\]|\[random\]|\%n/gi, Math.floor(Math.random()*1E9)),
-      'alt': arguments[1] || 'pixel'
-    }).css({
-      'border': '0',
-      'display': 'none'
-    }).appendTo('body');
+    if(url){
+      $(doc.createElement('img')).attr({
+        'width': '1',
+        'height': '1',
+        'src': url.replace(/\[timestamp\]|\[random\]|\%n/gi, Math.floor(Math.random()*1E9)),
+        'alt': arguments[1] || 'pixel'
+      }).css({
+        'border': '0',
+        'display': 'none'
+      }).appendTo('body');
+    }
+    return this;
   };
 
   Promo.prototype.detectCreativeType = function(){
@@ -107,7 +110,7 @@ var wpAd = window.wpAd || {};
       '<param name="play" value="true" />' +
       '<param name="wmode" value="transparent" />' +
       '<param name="allowScriptAccess" value="always" />' +
-      '<param name="flashvars" value="clickTag=' + this.clickTag + '" />' +
+      '<param name="flashvars" value="clickTag=' + encodeURIComponent(this.clickTag) + '" />' +
       '<!--[if !IE]>-->' +
         '<object type="application/x-shockwave-flash" data="' + this.creativeURL + '" width="'+ this.width +'" height="'+ this.height +'" style="outline:none;">' +
           '<param name="movie" value="' + this.creativeURL + '" />' +
@@ -115,7 +118,7 @@ var wpAd = window.wpAd || {};
           '<param name="play" value="true" />' +
           '<param name="wmode" value="transparent" />' +
           '<param name="allowScriptAccess" value="always" />' +
-          '<param name="flashvars" value="clickTag=' + this.clickTag + '" />' +
+          '<param name="flashvars" value="clickTag=' + encodeURIComponent(this.clickTag) + '" />' +
         '</object>' +
       '<!--<![endif]-->' +
     '</object>')[0];
@@ -139,12 +142,13 @@ var wpAd = window.wpAd || {};
   };
   
   wpAd.promoTile = new Promo({
-    creativeURL: '[%Creative%]',
+    creativeURL: '[%Creative%]' || '[%Creative URL%]',
     backupURL: '[%Backup Image%]',
     width: [%Width%],
     height: [%Height%],
     clickTag: '%c%u',
-    impressionPixel: '%i/%h/dot.gif'
+    impressionPixel: '%i/%h/dot.gif',
+    clientPixel: '[%Client Impression Pixel%]'
   });
   
 })(window, document, wpAd, window.jQuery);
