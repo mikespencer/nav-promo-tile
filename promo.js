@@ -51,7 +51,7 @@ var wpAd = window.wpAd || {};
   Promo.prototype.detectCreativeType = function(){
     if(/\.swf$/i.test(this.creativeURL)){
       this.type = 'flash';
-    } else if(/\.html|\.htm$/i.test(this.creativeURL)){
+    } else if(/\.html$|\.htm$/i.test(this.creativeURL)){
       this.type = 'iframe';
     } else {
       this.type = 'image';
