@@ -9,6 +9,31 @@ var wpAd = window.wpAd || {};
   if(!$){
     return false;
   }
+
+  var $container = $('#main-nav'),
+    disabledNavTabsSelector = (function(o){
+      var rv = [];
+      for(var key in o){
+        if(o.hasOwnProperty(key) && !o[key][0]){
+          rv.push(o[key][1]);
+        }
+      }
+      return rv.join(',');
+    })({
+      'politics': [[%Politics Tab%], 'li.politics'],
+      'opinions': [[%Opinions Tab%], 'li.opinions'],
+      'local': [[%Local Tab%], 'li.local'],
+      'sports': [[%Sports Tab%], 'li.sports'],
+      'national': [[%National Tab%], 'li.national'],
+      'world': [[%World Tab%], 'li.world'],
+      'business': [[%Business Tab%], 'li.business'],
+      'tech': [[%Tech Tab%], 'li.technology'],
+      'lifestyle': [[%Lifestyle Tab%], 'li.lifestyle'],
+      'entertainment': [[%Entertainment Tab%], 'li.entertainment'],
+      'jobs': [[%Jobs Tab%], 'li.jobs'],
+      'realestate': [[%Real Estate Tab%], 'li.realestate'],
+      'more': [[%More Tab%], 'li.classifieds']
+    });
   
   //add bind method if browser does not natively support it:
   if(!Function.prototype.bind)Function.prototype.bind=function(oThis){if(typeof this!=="function")throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");var aArgs=Array.prototype.slice.call(arguments,1),fToBind=this,FNOP=function(){},fBound=function(){return fToBind.apply(this instanceof FNOP&&oThis?this:oThis,aArgs.concat(Array.prototype.slice.call(arguments)));};FNOP.prototype=this.prototype;fBound.prototype=new FNOP();return fBound;};
@@ -24,18 +49,19 @@ var wpAd = window.wpAd || {};
   }
   
   Promo.prototype.appendToNav = function(){
+    $('.subnav-ad', $container).hide(), 
     $(doc.createElement('div')).addClass('nav-promo-tile').css({
       display: 'block',
       height: this.height + 'px',
       margin: '5px auto auto -7px',
       overflow: 'hidden',
       width: this.width + 'px'
-    }).append(this.creative).appendTo('#main-nav div.subnav');
+    }).append(this.creative).appendTo('div.subnav', $container);
     return this;
   };
 
   Promo.prototype.onFirstMouseOver = function(){
-    $('#main-nav li.top').unbind('mouseover.PromoTile');
+    $('li.top', $container).unbind('mouseover.PromoTile');
     this.appendToNav().addPixel(this.impressionPixel, 'promo tile impression').addPixel(this.clientPixel, 'promo tile impression');
   };
   
@@ -74,7 +100,7 @@ var wpAd = window.wpAd || {};
       } else{
         this.creative = this.buildImageCreative(this.backupURL);
       }
-    } else if(this.type === 'image'){
+    } else if(this.type === 'iframe'){
       this.creative = this.buildIframeCreative(this.creativeURL);
     }
     return this;
@@ -82,7 +108,7 @@ var wpAd = window.wpAd || {};
 
   Promo.prototype.buildImageCreative = function(url){
     var a = doc.createElement('a');      
-    a.href = this.clickTag;
+    a.href = this.clickTrack + this.clickTag;
     a.target = '_blank';
     
     $(doc.createElement('img')).attr({
@@ -121,7 +147,7 @@ var wpAd = window.wpAd || {};
       '<param name="play" value="true" />' +
       '<param name="wmode" value="transparent" />' +
       '<param name="allowScriptAccess" value="always" />' +
-      '<param name="flashvars" value="clickTag=' + encodeURIComponent(this.clickTag) + '" />' +
+      '<param name="flashvars" value="clickTag=' + this.clickTrack + encodeURIComponent(this.clickTag) + '" />' +
       '<!--[if !IE]>-->' +
         '<object type="application/x-shockwave-flash" data="' + this.creativeURL + '" width="'+ this.width +'" height="'+ this.height +'" style="outline:none;">' +
           '<param name="movie" value="' + this.creativeURL + '" />' +
@@ -129,14 +155,14 @@ var wpAd = window.wpAd || {};
           '<param name="play" value="true" />' +
           '<param name="wmode" value="transparent" />' +
           '<param name="allowScriptAccess" value="always" />' +
-          '<param name="flashvars" value="clickTag=' + encodeURIComponent(this.clickTag) + '" />' +
+          '<param name="flashvars" value="clickTag=' + this.clickTrack + encodeURIComponent(this.clickTag) + '" />' +
         '</object>' +
       '<!--<![endif]-->' +
     '</object>')[0];
   };
   
   Promo.prototype.addEvents = function(){
-    $('#main-nav li.top').not('li.jobs, li.realestate, li.classifieds').hover(function(){
+    $('li.top', $container).not(disabledNavTabsSelector).hover(function(){
       $('div.nav-promo-tile', this).css({'visibility': 'visible'});
     }, function(){
       $('div.nav-promo-tile', this).css({'visibility': 'hidden'});
@@ -157,7 +183,8 @@ var wpAd = window.wpAd || {};
     backupURL: '[%Backup Image%]',
     width: [%Width%],
     height: [%Height%],
-    clickTag: '%c%u',
+    clickTrack: '%c',
+    clickTag: '%u',
     impressionPixel: '%i/%h/dot.gif',
     clientPixel: '[%Client Impression Pixel%]'
   });
